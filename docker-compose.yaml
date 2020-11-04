@@ -1,18 +1,18 @@
 version: "3.3"
 
 services:
-  vb_gateway:
+  vb_mqtt_broker:
     build:
-      context: ./vb_gateway
+      context: ./vb_mqtt_broker
       dockerfile: Dockerfile
-    image: vb-:0.0.2
+    image: vb-mqtt_broker:0.0.2
     restart: always
     environment:
       - TZ=Europe/Moscow
       - PYTHONPATH=/
     volumes:
-      - /home/user/visiobas-gateway/vb_gateway:/vb_gateway
-    command: python /vb_gateway/run.py
+      - vb_mqtt_broker:/vb_mqtt_broker
+    command:
     ports:
       - 1883:1883
       - 8883:8883
