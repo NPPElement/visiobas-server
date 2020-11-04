@@ -37,6 +37,9 @@ services:
     build: publisher
     
     environment:
+      - TZ=Europe/Moscow
+      - PYTHONPATH=/
+      
       AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
     
     networks:
