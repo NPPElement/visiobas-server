@@ -1,18 +1,48 @@
+# Для запуска 'docker-compose up' .
 version: "3.3"
 
+# В этом разделе описаны различные контейнеры (службы).
 services:
-  vb_mqtt_broker:
-    build:
-      context: ./vb_mqtt_broker
-      dockerfile: Dockerfile
-    image: vb-mqtt_broker:0.0.2
-    restart: always
+  
+  rabbitmq:
+    # Есть готовый оффициальный образ RabbitMQ;
+    # https://hub.docker.com/_/rabbitmq/ для подробностей.
+    image: 'rabbitmq: management-alpine'
+    ports:
+      # Стандартный порт протокола AMQP
+      - ' 5672: 5672 '
+      # Пользовательский интерфейс управления HTTP
+      - ' 15672: 15672 '
+    networks:
+      - network
+
+  consumer:
+    # If needed, Docker Compose will automatically run consumer/Dockerfile.
+    build: consumer
+
+    # Переменная окружения:
     environment:
       - TZ=Europe/Moscow
       - PYTHONPATH=/
-    volumes:
-      - vb_mqtt_broker:/vb_mqtt_broker
-    command:
-    ports:
-      - 1883:1883
-      - 8883:8883
+
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+
+    # Опять же, запустите частную сеть. Необходимо увидеть "rabbitmq"
+    # волшебное DNS-имя Docker.
+    networks:
+      - network
+
+  publisher:
+    # Идентично потребителю.
+    build: publisher
+    
+    environment:
+      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+    
+    networks:
+      - network
+
+networks:
+  # Объявить нашу частную сеть. Мы должны объявить один за волшебство
+  # Docker DNS для работы, но в остальном настройки по умолчанию в порядке.
+  network: {}
