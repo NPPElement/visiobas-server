@@ -1,1 +1,18 @@
+version: "3.3"
 
+services:
+  vb_gateway:
+    build:
+      context: ./vb_gateway
+      dockerfile: Dockerfile
+    image: vb-:0.0.2
+    restart: always
+    environment:
+      - TZ=Europe/Moscow
+      - PYTHONPATH=/
+    volumes:
+      - /home/user/visiobas-gateway/vb_gateway:/vb_gateway
+    command: python /vb_gateway/run.py
+    ports:
+      - 1883:1883
+      - 8883:8883
