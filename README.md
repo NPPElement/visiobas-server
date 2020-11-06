@@ -1,1 +1,8 @@
-# visiobas-server
+visiobas-server
+=======================
+
+Publisher
+-----------------
+
+Development
+-----------
